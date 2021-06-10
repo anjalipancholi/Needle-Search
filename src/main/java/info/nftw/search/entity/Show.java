@@ -21,5 +21,4 @@ public class Show {
     private final String listedIn;
     private final String description;
 
-
 }
