@@ -44,8 +44,10 @@ public class SearchServiceImpl implements SearchService {
             }
         });
         List<Map<String, String>> topItems = matchingItems;
-        if (matchingItems.size() < searchRequest.getStart() && matchingItems.size() <= searchRequest.getStart() + searchRequest.getCount()) {
-            topItems = matchingItems.subList(searchRequest.getStart(), searchRequest.getStart() + searchRequest.getCount());
+        int start = searchRequest.getStart();
+        int end = Integer.min(matchingItems.size(), searchRequest.getStart() + searchRequest.getCount());
+        if (start < matchingItems.size()) {
+            topItems = matchingItems.subList(start, end);
         }
         return new SearchResponse(topItems);
     }
