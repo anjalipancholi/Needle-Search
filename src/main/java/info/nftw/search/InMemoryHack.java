@@ -1,6 +1,9 @@
 package info.nftw.search;
 
 import info.nftw.search.entity.Show;
+import org.apache.commons.csv.CSVFormat;
+import org.apache.commons.csv.CSVParser;
+import org.apache.commons.csv.CSVRecord;
 
 import java.io.FileInputStream;
 import java.io.IOException;
@@ -8,18 +11,15 @@ import java.io.InputStreamReader;
 import java.nio.charset.StandardCharsets;
 import java.util.*;
 
-import org.apache.commons.csv.CSVFormat;
-import org.apache.commons.csv.CSVParser;
-import org.apache.commons.csv.CSVRecord;
-
 public class InMemoryHack {
-
+    //service
     private static final String AND = "AND";
     private static final String OR = "OR";
-
+    //repo
     private Map<String, Show> showMap;
     private Map<String, Map<String, Set<String>>> searchMap;
 
+    //Service
     private List<String> getQueryTokens(String query) {
         List<String> queryTokens = new ArrayList<>();
         boolean quotationOpen = false;
@@ -39,6 +39,7 @@ public class InMemoryHack {
         return queryTokens;
     }
 
+    //service
     private List<List<String>> getUnionConditions(String query) {
         List<String> queryTokens = getQueryTokens(query);
         queryTokens.add(OR);
@@ -60,6 +61,7 @@ public class InMemoryHack {
         return orConditions;
     }
 
+    //service
     private Set<String> getIntersectionResults(List<String> queries) {
         Set<String> set = null;
         for (String query : queries) {
@@ -73,6 +75,7 @@ public class InMemoryHack {
         return set;
     }
 
+    //service
     public Set<String> searchOperations(String query) {
         List<List<String>> unionConditions = getUnionConditions(query);
         Set<String> result = new HashSet<>();
@@ -82,6 +85,7 @@ public class InMemoryHack {
         return result;
     }
 
+    //service
     public Set<String> search(String query) {
         String[] split = query.split("=");
         Set<String> result = new HashSet<>();
@@ -97,6 +101,7 @@ public class InMemoryHack {
         return result;
     }
 
+    //repo
     private void populateShowsAndSearchMapFromFile(String file) throws IOException {
         InputStreamReader input = new InputStreamReader(new FileInputStream(file), StandardCharsets.UTF_8);
         CSVParser records = CSVFormat.DEFAULT.withFirstRecordAsHeader().parse(input);
