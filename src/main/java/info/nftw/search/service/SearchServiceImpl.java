@@ -50,7 +50,7 @@ public class SearchServiceImpl implements SearchService {
         return new SearchResponse(topItems);
     }
 
-    //Service
+    // Separate by space, leaving the spaces within quotes.
     private List<String> getQueryTokens(String query) {
         List<String> queryTokens = new ArrayList<>();
         boolean quotationOpen = false;
@@ -70,7 +70,7 @@ public class SearchServiceImpl implements SearchService {
         return queryTokens;
     }
 
-    //service
+    // Outer list is for union and inner list for intersection.
     private List<List<String>> getUnionConditions(String query) {
         List<String> queryTokens = getQueryTokens(query);
         queryTokens.add(OR);
@@ -92,11 +92,11 @@ public class SearchServiceImpl implements SearchService {
         return orConditions;
     }
 
-    //service
+    // For all the sub-queries containing AND, return the intersection.
     private Set<String> getIntersectionResults(List<String> queries) {
         Set<String> set = null;
         for (String query : queries) {
-            Set<String> searchResult = search(query);
+            Set<String> searchResult = searchForCondition(query);
             if (set == null) {
                 set = new HashSet<>(searchResult);
             } else {
@@ -106,9 +106,9 @@ public class SearchServiceImpl implements SearchService {
         return set;
     }
 
-    //service
-    public Set<String> search(String query) {
-        String[] split = query.split(":");
+    // Split the query condition and, return matching ids.
+    private Set<String> searchForCondition(String condition) {
+        String[] split = condition.split(":");
         String field = split[0];
         // Removing the quotes
         String fieldValue = split[1].substring(1, split[1].length() - 1).toLowerCase();
@@ -116,7 +116,8 @@ public class SearchServiceImpl implements SearchService {
         return matchingIds;
     }
 
-    public Set<String> getMatchingIds(String query) {
+    // Parse queries and generate result ids.
+    private Set<String> getMatchingIds(String query) {
         List<List<String>> unionConditions = getUnionConditions(query);
         Set<String> result = new HashSet<>();
         for (List<String> intersectionConditions : unionConditions) {
